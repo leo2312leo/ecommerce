@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Page</title>
+    <link rel="stylesheet" href="cart.css">
+</head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.product {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 40%;
+}
+
+.product h2 {
+    margin-bottom: 10px;
+}
+
+.product .price {
+    font-size: 1.5em;
+    color: #27ae60;
+    margin-bottom: 15px;
+}
+
+.buy-now {
+    padding: 10px 20px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.buy-now:hover {
+    background-color: #2ecc71;
+}
+
+.cart {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 50%;
+}
+
+#cart-items p {
+    font-size: 1.2em;
+}
+
+#total {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+form {
+    margin-top: 30px;
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+form button {
+    background-color: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+form button:hover {
+    background-color: #2ecc71;
+}
+
+</style>
+<body><center>
+        <div class="cart">
+            <h2>Rohit mobile shop</h2>
+            <div id="cart-items">
+                <p>No items in cart</p>
+            </div>
+            <div id="total">
+                <strong>Total: 0</strong>
+            </div>
+
+            <!-- Payment Details Form -->
+            <h3>Billing Details</h3>
+            <form id="payment-form">
+                <!-- cart.html -->
+
+
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            
+                <label for="credit-card-number">Credit Card Number:</label>
+                <input type="text" id="credit-card-number" name="credit-card-number" required pattern="\d{16}" title="Please enter a 16-digit card number">
+            
+                <label for="name">Cardholder's Name:</label>
+                <input type="text" id="name" name="name" required>
+            
+                <label for="cvv">CVV:</label>
+                <input type="text" id="cvv" name="cvv" required pattern="\d{3,4}" title="Please enter a 3 or 4 digit CVV">
+            
+                <label for="exp-date">Expiration Date (MM/YY):</label>
+                <input type="text" id="exp-date" name="exp-date" required pattern="(0[1-9]|1[0-2])\/([0-9]{2})" title="Please enter expiration date in MM/YY format">
+            
+                <button type="submit">Complete Purchase</button>
+                <div id="cart-items"></div>
+                <div id="total"></div>
+                
+                <!-- Back to Home Button -->
+                <button onclick="window.location.href='home.html'">Back to Home</button>
+            </form>
+            </center>
+            
+
+    <script>
+        // cart.js or script in cart.html
+document.addEventListener('DOMContentLoaded', function() {
+    const cartItems = document.getElementById('cart-items');
+    const totalPrice = document.getElementById('total');
+    
+    // Retrieve cart from localStorage
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let total = 0;
+
+    // Clear cart display if empty
+    if (cart.length === 0) {
+        cartItems.innerHTML = '<p>Your cart is empty!</p>';
+    }
+
+    // Display cart items
+    cart.forEach((item, index) => {
+        const itemElement = document.createElement('div');
+        itemElement.classList.add('cart-item');
+        itemElement.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" width="50" height="50">
+            <span>${item.name}</span>
+            <span>₹${item.price}</span>
+            <button class="remove-btn" data-index="${index}">Remove</button>
+        `;
+        cartItems.appendChild(itemElement);
+        total += item.price;
+    });
+
+    // Display total price
+    totalPrice.textContent = `Total: ₹${total}`;
+
+    // Add event listeners to the remove buttons
+    const removeButtons = document.querySelectorAll('.remove-btn');
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(button.getAttribute('data-index'));
+
+            // Remove the item from the cart
+            cart.splice(index, 1);
+
+            // Update cart in localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Reload the page to reflect the changes
+            window.location.reload();
+        });
+    });
+});
+// Handle form submission
+document.getElementById('payment-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const paymentDetails = {
+        username: formData.get('username'),
+        email: formData.get('email'),
+        cartNumber: formData.get('cart-number'),
+        cardName: formData.get('name'),
+        cvv: formData.get('cvv'),
+        expDate: formData.get('exp-date'),
+    };
+    
+    console.log('Payment Details:', paymentDetails);
+    alert('Thank you for your purchase!');
+    // Here you can handle the payment process, send data to the server, etc.
+});
+
+
+
+    </script>
+</body>
+</html>
